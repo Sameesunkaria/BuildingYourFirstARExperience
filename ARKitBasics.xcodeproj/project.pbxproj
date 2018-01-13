@@ -16,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		000595300005956000000001 /* SampleCode.xcconfig */ = {isa = PBXFileReference; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
+		002532C00025359000000001 /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		112FE5661F4F95A200BF85EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		842316DC1F2030C300D189D1 /* ARKitBasics.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARKitBasics.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		842316DF1F2030C300D189D1 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -24,9 +26,7 @@
 		842316EB1F2030C300D189D1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		842316ED1F2030C300D189D1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		84ABEA091F3D15E70052D547 /* Assets.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = Assets.scnassets; sourceTree = "<group>"; };
-		8B0B79D5557A70831DCDECCE /* LICENSE.txt */ = {isa = PBXFileReference; includeInIndex = 1; path = LICENSE.txt; sourceTree = "<group>"; };
 		C85709121F34FC2200BB957F /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = SampleCode.xcconfig; path = Configuration/SampleCode.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -40,14 +40,31 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		000597400005968000000001 /* Configuration */ = {
+			isa = PBXGroup;
+			children = (
+				000595300005956000000001 /* SampleCode.xcconfig */,
+			);
+			name = Configuration;
+			sourceTree = "<group>";
+		};
+		00258090002563B000000001 /* LICENSE */ = {
+			isa = PBXGroup;
+			children = (
+				002532C00025359000000001 /* LICENSE.txt */,
+			);
+			name = LICENSE;
+			path = LICENSE;
+			sourceTree = "<group>";
+		};
 		842316D31F2030C300D189D1 = {
 			isa = PBXGroup;
 			children = (
 				C85709121F34FC2200BB957F /* README.md */,
 				842316DE1F2030C300D189D1 /* ARKitBasics */,
 				842316DD1F2030C300D189D1 /* Products */,
-				D408E81308E36FA5DB3E85FE /* Configuration */,
-				C82E00ED2BD692602B4A78D9 /* LICENSE */,
+				000597400005968000000001 /* Configuration */,
+				00258090002563B000000001 /* LICENSE */,
 			);
 			sourceTree = "<group>";
 		};
@@ -73,23 +90,6 @@
 			path = ARKitBasics;
 			sourceTree = "<group>";
 		};
-		C82E00ED2BD692602B4A78D9 /* LICENSE */ = {
-			isa = PBXGroup;
-			children = (
-				8B0B79D5557A70831DCDECCE /* LICENSE.txt */,
-			);
-			name = LICENSE;
-			path = LICENSE;
-			sourceTree = "<group>";
-		};
-		D408E81308E36FA5DB3E85FE /* Configuration */ = {
-			isa = PBXGroup;
-			children = (
-				F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */,
-			);
-			name = Configuration;
-			sourceTree = "<group>";
-		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -100,6 +100,7 @@
 				842316D81F2030C300D189D1 /* Sources */,
 				842316D91F2030C300D189D1 /* Frameworks */,
 				842316DA1F2030C300D189D1 /* Resources */,
+				8416532C1F32A67600CD6730,
 			);
 			buildRules = (
 			);
@@ -191,7 +192,7 @@
 /* Begin XCBuildConfiguration section */
 		842316EE1F2030C300D189D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */;
+			baseConfigurationReference = 000595300005956000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -222,6 +223,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -241,6 +243,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -249,7 +252,7 @@
 		};
 		842316EF1F2030C300D189D1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */;
+			baseConfigurationReference = 000595300005956000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -280,6 +283,7 @@
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
@@ -292,6 +296,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				VALIDATE_PRODUCT = YES;
@@ -300,12 +305,16 @@
 		};
 		842316F11F2030C300D189D1 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */;
+			baseConfigurationReference = 000595300005956000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ARKitBasics/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.ARKitBasics${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
@@ -316,12 +325,16 @@
 		};
 		842316F21F2030C300D189D1 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F67C3B19719DBDC4F743CB7B /* SampleCode.xcconfig */;
+			baseConfigurationReference = 000595300005956000000001 /* SampleCode.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ARKitBasics/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				IPHONEOS_DEPLOYMENT_TARGET = 11.3;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.example.apple-samplecode.ARKitBasics${SAMPLE_CODE_DISAMBIGUATOR}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";

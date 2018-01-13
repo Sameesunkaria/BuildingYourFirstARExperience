@@ -27,7 +27,7 @@ The [`ARWorldTrackingConfiguration`][3] class provides high-precision motion tra
 
 ``` swift
 let configuration = ARWorldTrackingConfiguration()
-configuration.planeDetection = .horizontal
+configuration.planeDetection = [.horizontal, .vertical]
 sceneView.session.run(configuration)
 ```
 [View in Source](x-source-tag://StartARSession)

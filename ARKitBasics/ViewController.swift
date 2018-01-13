@@ -39,7 +39,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
          device position and orientation tracking, and plane detection.
         */
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .horizontal
+        configuration.planeDetection = [.horizontal, .vertical]
         sceneView.session.run(configuration)
 
         // Set a delegate to track the number of plane anchors for providing UI feedback.
