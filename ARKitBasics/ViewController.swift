@@ -10,14 +10,14 @@ import SceneKit
 import ARKit
 
 class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
-	// MARK: - IBOutlets
+    // MARK: - IBOutlets
 
     @IBOutlet weak var sessionInfoView: UIView!
-	@IBOutlet weak var sessionInfoLabel: UILabel!
-	@IBOutlet weak var sceneView: ARSCNView!
+    @IBOutlet weak var sessionInfoLabel: UILabel!
+    @IBOutlet weak var sceneView: ARSCNView!
 
-	// MARK: - View Life Cycle
-	
+    // MARK: - View Life Cycle
+
     /// - Tag: StartARSession
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -34,10 +34,8 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             """) // For details, see https://developer.apple.com/documentation/arkit
         }
 
-        /*
-         Start the view's AR session with a configuration that uses the rear camera,
-         device position and orientation tracking, and plane detection.
-        */
+        // Start the view's AR session with a configuration that uses the rear camera,
+        // device position and orientation tracking, and plane detection.
         let configuration = ARWorldTrackingConfiguration()
         configuration.planeDetection = [.horizontal, .vertical]
         sceneView.session.run(configuration)
@@ -45,27 +43,25 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Set a delegate to track the number of plane anchors for providing UI feedback.
         sceneView.session.delegate = self
         
-        /*
-         Prevent the screen from being dimmed after a while as users will likely
-         have long periods of interaction without touching the screen or buttons.
-        */
+        // Prevent the screen from being dimmed after a while as users will likely
+        // have long periods of interaction without touching the screen or buttons.
         UIApplication.shared.isIdleTimerDisabled = true
         
         // Show debug UI to view performance metrics (e.g. frames per second).
         sceneView.showsStatistics = true
     }
-	
-	override func viewWillDisappear(_ animated: Bool) {
-		super.viewWillDisappear(animated)
-		
-		// Pause the view's AR session.
-		sceneView.session.pause()
-	}
-	
-	// MARK: - ARSCNViewDelegate
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        // Pause the view's AR session.
+        sceneView.session.pause()
+    }
+
+    // MARK: - ARSCNViewDelegate
     
     /// - Tag: PlaceARContent
-	func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
+    func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Place content only for anchors found by plane detection.
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
 
@@ -74,21 +70,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         let planeNode = SCNNode(geometry: plane)
         planeNode.simdPosition = float3(planeAnchor.center.x, 0, planeAnchor.center.z)
         
-        /*
-         `SCNPlane` is vertically oriented in its local coordinate space, so
-         rotate the plane to match the horizontal orientation of `ARPlaneAnchor`.
-        */
+        // `SCNPlane` is vertically oriented in its local coordinate space, so
+        // rotate the plane to match the horizontal orientation of `ARPlaneAnchor`.
         planeNode.eulerAngles.x = -.pi / 2
         
         // Make the plane visualization semitransparent to clearly show real-world placement.
         planeNode.opacity = 0.25
         
-        /*
-         Add the plane visualization to the ARKit-managed node so that it tracks
-         changes in the plane anchor as plane estimation continues.
-        */
+        // Add the plane visualization to the ARKit-managed node so that it tracks
+        // changes in the plane anchor as plane estimation continues.
         node.addChildNode(planeNode)
-	}
+    }
 
     /// - Tag: UpdateARContent
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
@@ -101,12 +93,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         // Plane estimation may shift the center of a plane relative to its anchor's transform.
         planeNode.simdPosition = float3(planeAnchor.center.x, 0, planeAnchor.center.z)
         
-        /*
-         Plane estimation may extend the size of the plane, or combine previously detected
-         planes into a larger one. In the latter case, `ARSCNView` automatically deletes the
-         corresponding node for one plane, then calls this method to update the size of
-         the remaining plane.
-        */
+        // Plane estimation may also extend planes, or remove one plane to merge its extent into another.
         plane.width = CGFloat(planeAnchor.extent.x)
         plane.height = CGFloat(planeAnchor.extent.z)
     }
@@ -128,17 +115,17 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
 
     // MARK: - ARSessionObserver
-	
-	func sessionWasInterrupted(_ session: ARSession) {
-		// Inform the user that the session has been interrupted, for example, by presenting an overlay.
-		sessionInfoLabel.text = "Session was interrupted"
-	}
-	
-	func sessionInterruptionEnded(_ session: ARSession) {
-		// Reset tracking and/or remove existing anchors if consistent tracking is required.
-		sessionInfoLabel.text = "Session interruption ended"
-		resetTracking()
-	}
+
+    func sessionWasInterrupted(_ session: ARSession) {
+        // Inform the user that the session has been interrupted, for example, by presenting an overlay.
+        sessionInfoLabel.text = "Session was interrupted"
+    }
+
+    func sessionInterruptionEnded(_ session: ARSession) {
+        // Reset tracking and/or remove existing anchors if consistent tracking is required.
+        sessionInfoLabel.text = "Session interruption ended"
+        resetTracking()
+    }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user.
@@ -157,10 +144,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             // No planes detected; provide instructions for this app's AR interactions.
             message = "Move the device around to detect horizontal surfaces."
             
-        case .normal:
-            // No feedback needed when tracking is normal and planes are visible.
-            message = ""
-            
         case .notAvailable:
             message = "Tracking unavailable."
             
@@ -173,6 +156,11 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         case .limited(.initializing):
             message = "Initializing AR session."
             
+        default:
+            // No feedback needed when tracking is normal and planes are visible.
+            // (Nor when in unreachable limited-tracking states.)
+            message = ""
+
         }
 
         sessionInfoLabel.text = message
