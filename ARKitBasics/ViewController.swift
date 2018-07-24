@@ -64,38 +64,33 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Place content only for anchors found by plane detection.
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
-
-        // Create a SceneKit plane to visualize the plane anchor using its position and extent.
-        let plane = SCNPlane(width: CGFloat(planeAnchor.extent.x), height: CGFloat(planeAnchor.extent.z))
-        let planeNode = SCNNode(geometry: plane)
-        planeNode.simdPosition = float3(planeAnchor.center.x, 0, planeAnchor.center.z)
         
-        // `SCNPlane` is vertically oriented in its local coordinate space, so
-        // rotate the plane to match the horizontal orientation of `ARPlaneAnchor`.
-        planeNode.eulerAngles.x = -.pi / 2
+        // Create a custom object to visualize the plane geometry and extent.
+        let plane = Plane(anchor: planeAnchor, in: sceneView)
         
-        // Make the plane visualization semitransparent to clearly show real-world placement.
-        planeNode.opacity = 0.25
-        
-        // Add the plane visualization to the ARKit-managed node so that it tracks
+        // Add the visualization to the ARKit-managed node so that it tracks
         // changes in the plane anchor as plane estimation continues.
-        node.addChildNode(planeNode)
+        node.addChildNode(plane)
     }
 
     /// - Tag: UpdateARContent
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        // Update content only for plane anchors and nodes matching the setup created in `renderer(_:didAdd:for:)`.
-        guard let planeAnchor = anchor as?  ARPlaneAnchor,
-            let planeNode = node.childNodes.first,
-            let plane = planeNode.geometry as? SCNPlane
+        // Update only anchors and nodes set up by `renderer(_:didAdd:for:)`.
+        guard let planeAnchor = anchor as? ARPlaneAnchor,
+            let plane = node.childNodes.first as? Plane
             else { return }
         
-        // Plane estimation may shift the center of a plane relative to its anchor's transform.
-        planeNode.simdPosition = float3(planeAnchor.center.x, 0, planeAnchor.center.z)
-        
-        // Plane estimation may also extend planes, or remove one plane to merge its extent into another.
-        plane.width = CGFloat(planeAnchor.extent.x)
-        plane.height = CGFloat(planeAnchor.extent.z)
+        // Update ARSCNPlaneGeometry to the anchor's new estimated shape.
+        if let planeGeometry = plane.meshNode.geometry as? ARSCNPlaneGeometry {
+            planeGeometry.update(from: planeAnchor.geometry)
+        }
+
+        // Update extent visualization to the anchor's new bounding rectangle.
+        if let extentGeometry = plane.extentNode.geometry as? SCNPlane {
+            extentGeometry.width = CGFloat(planeAnchor.extent.x)
+            extentGeometry.height = CGFloat(planeAnchor.extent.z)
+            plane.extentNode.simdPosition = planeAnchor.center
+        }
     }
 
     // MARK: - ARSessionDelegate
@@ -142,7 +137,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
         switch trackingState {
         case .normal where frame.anchors.isEmpty:
             // No planes detected; provide instructions for this app's AR interactions.
-            message = "Move the device around to detect horizontal surfaces."
+            message = "Move the device around to detect horizontal and vertical surfaces."
             
         case .notAvailable:
             message = "Tracking unavailable."
@@ -169,7 +164,7 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
 
     private func resetTracking() {
         let configuration = ARWorldTrackingConfiguration()
-        configuration.planeDetection = .horizontal
+        configuration.planeDetection = [.horizontal, .vertical]
         sceneView.session.run(configuration, options: [.resetTracking, .removeExistingAnchors])
     }
 }
