@@ -4,10 +4,9 @@ Create an app that runs an AR session and uses plane detection to place 3D conte
 
 ## Overview
 
-This sample app runs an [ARKit][0] world tracking session with content displayed in a SceneKit view. To demonstrate plane detection, the app simply places an [`SCNPlane`][13] object to visualize each detected [`ARPlaneAnchor`][14] object.
+This sample app runs an [ARKit][0] world tracking session with content displayed in a SceneKit view. To demonstrate plane detection, the app visualizes both the estimated shape of and a bounding rectangle for each detected [`ARPlaneAnchor`][14] object. On supported devices, ARKit can recognize many types of real-world surfaces, so the app also labels each detected plane with identifying text.
 
 [0]:https://developer.apple.com/documentation/arkit
-[13]:https://developer.apple.com/documentation/scenekit/scnplane
 [14]:https://developer.apple.com/documentation/arkit/arplaneanchor
 
 ## Getting Started
@@ -114,9 +113,22 @@ func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor:
         extentGeometry.height = CGFloat(planeAnchor.extent.z)
         plane.extentNode.simdPosition = planeAnchor.center
     }
+    
+    // Update the plane's classification and the text position
+    if #available(iOS 12.0, *),
+        let classificationNode = plane.classificationNode,
+        let classificationGeometry = classificationNode.geometry as? SCNText {
+        let currentClassification = planeAnchor.classification.description
+        if let oldClassification = classificationGeometry.string as? String, oldClassification != currentClassification {
+            classificationGeometry.string = currentClassification
+            classificationNode.centerAlign()
+        }
+    }
+    
 }
 ```
 [View in Source](x-source-tag://UpdateARContent)
 
 [11]:https://developer.apple.com/documentation/arkit/arscnviewdelegate/2865799-renderer
 
+On iPhone XS, iPhone XS Max, and iPhone XR, ARKit can also classify detected planes, reporting which kind of common real-world surface that plane represents (for example, a table, floor, or wall). In this example, the [`renderer(_:didUpdate:for:)`][11] method also displays and updates a text label to show that information.

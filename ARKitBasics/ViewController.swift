@@ -22,18 +22,6 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        guard ARWorldTrackingConfiguration.isSupported else {
-            fatalError("""
-                ARKit is not available on this device. For apps that require ARKit
-                for core functionality, use the `arkit` key in the key in the
-                `UIRequiredDeviceCapabilities` section of the Info.plist to prevent
-                the app from installing. (If the app can't be installed, this error
-                can't be triggered in a production scenario.)
-                In apps where AR is an additive feature, use `isSupported` to
-                determine whether to show UI for launching AR experiences.
-            """) // For details, see https://developer.apple.com/documentation/arkit
-        }
-
         // Start the view's AR session with a configuration that uses the rear camera,
         // device position and orientation tracking, and plane detection.
         let configuration = ARWorldTrackingConfiguration()
@@ -91,6 +79,18 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
             extentGeometry.height = CGFloat(planeAnchor.extent.z)
             plane.extentNode.simdPosition = planeAnchor.center
         }
+        
+        // Update the plane's classification and the text position
+        if #available(iOS 12.0, *),
+            let classificationNode = plane.classificationNode,
+            let classificationGeometry = classificationNode.geometry as? SCNText {
+            let currentClassification = planeAnchor.classification.description
+            if let oldClassification = classificationGeometry.string as? String, oldClassification != currentClassification {
+                classificationGeometry.string = currentClassification
+                classificationNode.centerAlign()
+            }
+        }
+        
     }
 
     // MARK: - ARSessionDelegate
@@ -123,9 +123,29 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     }
     
     func session(_ session: ARSession, didFailWithError error: Error) {
-        // Present an error message to the user.
         sessionInfoLabel.text = "Session failed: \(error.localizedDescription)"
-        resetTracking()
+        guard error is ARError else { return }
+        
+        let errorWithInfo = error as NSError
+        let messages = [
+            errorWithInfo.localizedDescription,
+            errorWithInfo.localizedFailureReason,
+            errorWithInfo.localizedRecoverySuggestion
+        ]
+        
+        // Remove optional error messages.
+        let errorMessage = messages.compactMap({ $0 }).joined(separator: "\n")
+        
+        DispatchQueue.main.async {
+            // Present an alert informing about the error that has occurred.
+            let alertController = UIAlertController(title: "The AR session failed.", message: errorMessage, preferredStyle: .alert)
+            let restartAction = UIAlertAction(title: "Restart Session", style: .default) { _ in
+                alertController.dismiss(animated: true, completion: nil)
+                self.resetTracking()
+            }
+            alertController.addAction(restartAction)
+            self.present(alertController, animated: true, completion: nil)
+        }
     }
 
     // MARK: - Private methods
