@@ -17,9 +17,11 @@ class Plane: SCNNode {
     let meshNode: SCNNode
     let extentNode: SCNNode
     var classificationNode: SCNNode?
+
+    let planeColor: UIColor
     
     /// - Tag: VisualizePlane
-    init(anchor: ARPlaneAnchor, in sceneView: ARSCNView) {
+    init(anchor: ARPlaneAnchor, in sceneView: ARSCNView, with planeColor: UIColor = UIColor.planeColor) {
         
         #if targetEnvironment(simulator)
         #error("ARKit is not supported in iOS Simulator. Connect a physical iOS device and select it as your Xcode run destination, or select Generic iOS Device as a build-only destination.")
@@ -39,6 +41,8 @@ class Plane: SCNNode {
         // `SCNPlane` is vertically oriented in its local coordinate space, so
         // rotate it to match the orientation of `ARPlaneAnchor`.
         extentNode.eulerAngles.x = -.pi / 2
+
+        self.planeColor = planeColor
 
         super.init()
 
@@ -73,7 +77,7 @@ class Plane: SCNNode {
         // Use color and blend mode to make planes stand out.
         guard let material = meshNode.geometry?.firstMaterial
             else { fatalError("ARSCNPlaneGeometry always has one material") }
-        material.diffuse.contents = UIColor.planeColor
+        material.diffuse.contents = planeColor
     }
     
     private func setupExtentVisualStyle() {
@@ -83,7 +87,7 @@ class Plane: SCNNode {
         guard let material = extentNode.geometry?.firstMaterial
             else { fatalError("SCNPlane always has one material") }
         
-        material.diffuse.contents = UIColor.planeColor
+        material.diffuse.contents = planeColor
 
         // Use a SceneKit shader modifier to render only the borders of the plane.
         guard let path = Bundle.main.path(forResource: "wireframe_shader", ofType: "metal", inDirectory: "Assets.scnassets")

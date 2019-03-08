@@ -37,11 +37,6 @@ extension SCNNode {
     }
 }
 
-extension float4x4 {
-    init(translation vector: float3) {
-        self.init(float4(1, 0, 0, 0),
-                  float4(0, 1, 0, 0),
-                  float4(0, 0, 1, 0),
-                  float4(vector.x, vector.y, vector.z, 1))
-    }
+public func clamp<T>(_ value: T, _ minValue: T, _ maxValue: T) -> T where T: Comparable {
+    return min(max(value, minValue), maxValue)
 }
