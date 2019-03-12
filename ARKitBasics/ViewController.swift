@@ -79,8 +79,10 @@ class ViewController: UIViewController, ARSCNViewDelegate, ARSessionDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         guard anchor is ARPlaneAnchor else { return }
 
-        gameBoard.removeFromParentNode()
-        node.addChildNode(gameBoard)
+        if gameBoard.parent == nil {
+            node.addChildNode(gameBoard)
+            gameBoard.simdPosition = simd_float3(0, 0, 0)
+        }
     }
 
     // MARK: - ARSessionDelegate
